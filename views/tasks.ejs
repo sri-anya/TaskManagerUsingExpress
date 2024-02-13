@@ -12,18 +12,15 @@
 
 <body>
   <!-- NavBar -->
-  <nav class="navbar bg-body-tertiary">
+  <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
       <a href="/" class="navbar-brand">Task Manager</a>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      <a href="/about" class="navbar-brand">About</a>
     </div>
   </nav>
   <!-- Add new task -->
 
-  <div class="newTask" style="width:50%; margin:auto; padding-top: 45px; text-align: center;">
+  <div class="newTask" style="width:50%; margin:auto; padding-top: 35px; text-align: center;">
     <h1>Add a new Task</h1>
     <form id="newTaskForm">
       <div class="form-floating my-2">
@@ -55,29 +52,6 @@
     <h1>Tasks</h1>
     <ul class="list-group" id="taskList" style="margin:20px;">
 
-      <% tasks.forEach(element=> { %>
-
-        <li class="list-group-item" style="display: flex; justify-content:space-around" id="<%=element.id%>">
-          <input class="form-check-input me-1" type="checkbox" value="">
-          <label class="form-check-label" for="<%=element.id%>">
-            <%= element.taskName %>
-          </label>
-          <label class="form-check-label" for="<%=element.description%>">
-            <%= element.description%>
-          </label>
-          <label class="form-check-label" for="<%=element.dueDate%>">
-            <%= element.dueDate%>
-          </label>
-          <button type="button" style="display:block" class="btn btn-danger" onclick="document.getElementById(`<%=element.id%>`).style.display = 'none';
-              fetch(`http://localhost:3000/<%=element.id%>`, {
-                  method: 'DELETE'})
-                  .then(res => res.text()) // or res.json()
-                  .then(res => console.log(res))
-              " </button>Delete</button>
-        </li>
-
-        <% }) %>
-
 
 
     </ul>
@@ -85,77 +59,144 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+
   <script>
 
     console.log("script")
+
     const taskList = document.getElementById('taskList');
 
     function deleteTask(taskId) {
+      console.log(taskId)
       console.log(`taskTobe deleted: ${document.getElementById(taskId)}`)
-    document.getElementById(taskId).style.display = 'none';
+      document.getElementById(taskId).style.display = 'none';
 
-    fetch(`http://localhost:3000/${taskId}`, {
-      method: 'DELETE'
-    })
-    .then(res => res.text())
-    .then(res => console.log(res))
-    .catch(error => console.error('Error deleting task:', error));
-  }
+      fetch(`/${taskId}`, {
+        method: 'DELETE'
+      })
+        .then(res => res.text())
+        .then(res => console.log(res))
+        .catch(error => console.error('Error deleting task:', error));
+    }
+
+
+
+
+    function detailsOfTask(taskd) {
+
+      console.log(`task to get details: ${document.getElementById(taskd)}`)
+      console.log(taskd)
+    }
+
 
     // Function to fetch and display tasks
-    const fetchTasks = (task) => {
-      
-        // const response = await axios.get('/tasks');
-        // console.log(`response: ${response.body}`)
-        // const tasks = response.data;
-        // console.log(`tasks: ${response.body}`)
+//     const fetchTasks = (task) => {
 
-        // Clear existing tasks
-        taskList.innerHTML +=`<li class="list-group-item" style="display: flex; justify-content: space-around" id="${task.id}">
-                    <input class="form-check-input me-1" type="checkbox" value="">
-          <label class="form-check-label" for="${task.id}">
-            ${task.taskName}
-          </label>
-          <label class="form-check-label" for="${task.description}">
-            ${task.description}
-          </label>
-          <label class="form-check-label" for="${task.dueDate}">
-            ${task.dueDate}
-          </label>
-          <button type="button" style="display:block" class="btn btn-danger" onclick="deleteTask('${task.id}')"</button>Delete</button>
-          </li>
+//       // Clear existing tasks
+//       taskList.innerHTML += `<li class="list-group-item" style="display: flex; justify-content: space-around" id="${task.id}">
+         
+//           <label class="form-check-label" for="${task.taskName}">
+//             ${task.taskName}
+//           </label>
+//           <label class="form-check-label" for="${task.description}">
+//             ${task.description}
+//           </label>
+//           <label class="form-check-label" for="${task.dueDate}">
+//             ${task.dueDate}
+//           </label>
+//           <button type="button" style="display: block" class="btn btn-danger" onclick="(function('task.id') {
+//   console.log(task.id);
+//   document.getElementById(taskId).style.display = 'none';
+//   fetch(`/${task.id}`, {
+//   method: 'DELETE'
+// })
+//     .then(res => res.text())
+//     .then(res => console.log(res))
+//     .catch(error => console.error('Error deleting task:', error));
+// })('yourTaskId')">
+//   Delete
+// </button>
+//           <button type="button" style="display:block" class="btn btn-info" onclick="detailsOfTask('${task.id}')"</button>Details</button>
+         
+//           </li>
           
-          `;
-      
-      
-      
-    };
+//           `;
+
+
+
+//     };
+
+
+const fetchTasks = (task) => {
+  // Clear existing tasks
+  let li = document.createElement('li');
+  li.className = "list-group-item";
+  li.style.display = "flex";
+  li.style.justifyContent = "space-around";
+  li.id = task.id;
+
+  li.innerHTML = `
+    <label class="form-check-label" for="${task.taskName}">${task.taskName}</label>
+    <label class="form-check-label" for="${task.description}">${task.description}</label>
+    <label class="form-check-label" for="${task.dueDate}">${task.dueDate}</label>
+  `;
+
+  // Append the list item to the taskList
+  taskList.appendChild(li);
+
+ 
+};
 
     document.getElementById("newTaskForm").addEventListener("submit", async (e) => {
       e.preventDefault()
-      console.log(e.target.taskName.value)
+
       const taskData = {
         taskName: document.getElementById('taskName').value,
         description: document.getElementById('description').value,
         dueDate: document.getElementById('dueDate').value,
+
       };
+      // try {
+      //   // Send a POST request to create a new task
+      //   await axios.post('/', taskData);
+
+      //   // Fetch and display updated tasks
+
+      //   fetchTasks(taskData);
+
+      //   // Reset the form after submit
+      //   document.getElementById("newTaskForm").reset()
+
+      // } catch (error) {
+      //   console.error('Error creating task:', error);
+      // }
+
       try {
-        // Send a POST request to create a new task
-        await axios.post('/', taskData);
+        // Send a POST request to create a new task using Fetch API
+        const response = await fetch('/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(taskData)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
         // Fetch and display updated tasks
-
         fetchTasks(taskData);
 
         // Reset the form after submit
-        document.getElementById("newTaskForm").reset()
-
+        document.getElementById("newTaskForm").reset();
       } catch (error) {
         console.error('Error creating task:', error);
       }
 
     })
+
+
   </script>
 
 </body>

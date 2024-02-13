@@ -13,6 +13,7 @@ const tasks = [];
 
 // Middleware for parsing JSON in the request body
 app.use(bodyParser.json());
+app.use(express.json());
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
@@ -47,6 +48,7 @@ app.post('/', (req, res) => {
     taskName,
     description,  
     dueDate,
+ 
   };
 
   // Add the new task to the in-memory data store
@@ -73,8 +75,9 @@ app.get('/:id', (req, res) => {
   }
 
   )
-  console.log(`requestedTask, ${requestedTask}`)
-  res.send(`${req.params.id}, ${requestedTask.taskName}`)
+  
+
+  res.render('singleTask',{task:requestedTask})
 
 })
 
@@ -83,10 +86,11 @@ app.get('/:id', (req, res) => {
 // Endpoint: PATCH /tasks/:id
 // Allow users to update specific details of a task. Users can send a request with the task ID in the URL and provide the updated details in the request body.
 app.patch('/:id', (req, res) => {
-  const { taskName, description, dueDate } = req.body;
+  console.log(req.body)
+  const { taskName, description, dueDate} = req.body;
   const reqIndex = req.params.id
   const taskToUpdate = tasks.find((task) => {
-    console.log(typeof task.id, typeof reqIndex)
+    console.log(task.id, reqIndex)
     // task.id is a number and reqIndex is a string
     if ((task.id).toString() === reqIndex) {
       return true
@@ -100,7 +104,7 @@ app.patch('/:id', (req, res) => {
   taskToUpdate.taskName = taskName || taskToUpdate.taskName;
   taskToUpdate.description = description || taskToUpdate.description;
   taskToUpdate.dueDate = dueDate || taskToUpdate.dueDate;
-
+ 
   // Send a response with the newly created task
   res.json(taskToUpdate);
 
